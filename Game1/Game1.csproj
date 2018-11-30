@@ -6,11 +6,11 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{81DA4D0D-A2A9-47DA-9256-F66940C56A08}</ProjectGuid>
+    <ProjectGuid>{1A4D80D3-2354-4BED-8708-57FCBDD97CD5}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MonoGameRougelike</RootNamespace>
-    <AssemblyName>MonoGameRougelike</AssemblyName>
+    <RootNamespace>Game1</RootNamespace>
+    <AssemblyName>Game1</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MonoGamePlatform>Windows</MonoGamePlatform>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
@@ -41,12 +41,35 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Console.cs" />
-    <Compile Include="DungeonMap.cs" />
+    <Compile Include="Core\CommandItemDrop.cs" />
+    <Compile Include="Core\CommandResult.cs" />
+    <Compile Include="Core\CommandSystem.cs" />
+    <Compile Include="Core\Direction.cs" />
+    <Compile Include="Core\DrawView.cs" />
+    <Compile Include="Core\ID.cs" />
+    <Compile Include="Core\Roll.cs" />
+    <Compile Include="Core\TypeItem.cs" />
+    <Compile Include="Core\TypeObject.cs" />
+    <Compile Include="Core\TypeView.cs" />
+    <Compile Include="Interfaces\IActor.cs" />
+    <Compile Include="Interfaces\IDescription.cs" />
+    <Compile Include="Interfaces\IGameObject.cs" />
+    <Compile Include="Interfaces\IItem.cs" />
+    <Compile Include="Interfaces\ILevel.cs" />
+    <Compile Include="Interfaces\IScreen.cs" />
+    <Compile Include="item.cs" />
+    <Compile Include="Models\DrawCell.cs" />
     <Compile Include="Game1.cs" />
-    <Compile Include="IScreen.cs" />
+    <Compile Include="Models\Enemie.cs" />
+    <Compile Include="Models\Inventory.cs" />
+    <Compile Include="Models\Level.cs" />
+    <Compile Include="Models\Player.cs" />
+    <Compile Include="Models\Weapon.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Screens\InwentoryScreen.cs" />
+    <Compile Include="Screens\MapScreen.cs" />
+    <Compile Include="Screens\ScreenManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">
@@ -63,7 +86,9 @@
   </ItemGroup>
   <ItemGroup>
     <MonoGameContentReference Include="Content\Content.mgcb" />
-    <None Include="app.manifest" />
+    <None Include="app.manifest">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

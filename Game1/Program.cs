@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MonoGameRougelike
+namespace Game1
 {
 #if WINDOWS || LINUX
     /// <summary>
