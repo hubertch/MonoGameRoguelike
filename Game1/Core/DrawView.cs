@@ -77,6 +77,13 @@ namespace Game1.Core
             _spriteBatch.End();
         }
 
+        internal void DrawMessage(string message)
+        {
+            _spriteBatch.Begin();
+                _spriteBatch.DrawString(_font, message, new Vector2(312, 18), Color.White);
+            _spriteBatch.End();
+        }
+
         public void DrawActorInventory()
         {
             _spriteBatch.Begin();

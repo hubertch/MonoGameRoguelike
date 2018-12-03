@@ -10,6 +10,7 @@ using Game1.Core;
 using RogueSharp.Random;
 using RogueSharp;
 using RogueSharp.MapCreation;
+using Game1.Core.Delegates;
 
 namespace Game1.Models
 {
@@ -17,6 +18,12 @@ namespace Game1.Models
     {
         #region --- private fields ---
         private IMap _dungeonMap;
+
+        public event SendMessage SendMessage;
+        private void OnSendMessage(string message)
+        {
+            SendMessage?.Invoke(this, message);
+        }
 
         private List<Enemie> _enemies;
         private List<IItem> _item;
@@ -45,6 +52,7 @@ namespace Game1.Models
         #region --- public methods ---
         public void ItemDroped(IItem item)
         {
+            OnSendMessage($"Wyrzuciles '{item.Name}'.");
             _item.Add(item);
         }
 
@@ -56,6 +64,7 @@ namespace Game1.Models
                 item = _item.FirstOrDefault(i => i.X == x && i.Y == y);
                 _item.Remove(item);
             }
+            OnSendMessage($"Podniosłeś '{item.Name}'.");
             return item;
         }
 
@@ -93,6 +102,9 @@ namespace Game1.Models
                 actor.X = x;
                 actor.Y = y;
                 SetWalkable(x, y, false);
+
+
+                if (_item.Any(i => i.X == x && i.Y == y)) OnSendMessage($"Znajdujesz jakies przedmioty.");
                 return true;
             }
 

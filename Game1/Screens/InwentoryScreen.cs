@@ -25,9 +25,10 @@ namespace Game1.Screens
             drawView.DrawActorInventory();
         }
 
-        public CommandResult RespondToUserInput(Keys[] arraykeys, ScreenManager screens)
+        public CommandResult RespondToUserInput(Keys[] arraykeys)
         {
-            return CommandSystem.Instance.Commands[arraykeys[0]].Invoke();
+            //return CommandSystem.Instance.Commands[arraykeys[0]].Invoke();
+            return null;
         }
     }
 }

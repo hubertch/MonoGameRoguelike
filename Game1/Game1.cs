@@ -9,6 +9,7 @@ using Game1.Models;
 using Game1.Core;
 using System.Collections.Generic;
 using Game1.Screens;
+using Game1.Core.Delegates;
 
 namespace Game1
 {
@@ -21,8 +22,8 @@ namespace Game1
         SpriteBatch spriteBatch;
         KeyboardState previousState;
         IScreen activeScreen = null;
-        ScreenManager screens = null;
 
+        private string messageToDraw = string.Empty;
         public SpriteBatch SpriteBatch { get => spriteBatch; }
         public ILevel Level { get; private set; }
         public IActor Player { get; private set; }
@@ -50,18 +51,23 @@ namespace Game1
             Random = new Random();
 
             Level = new Level(new RandomRoomsMapCreationStrategy<Map>(20, 40, 100, 10, 3));
+            (Level as Level).SendMessage += DrawMessage;
+
             Player = new Player(Level.GetRandomWalkableCell(Random));
 
-            screens = new ScreenManager(MapScreen.Instance,
-                InventoryScreen.Instance);
+            MapScreen.Instance.Inicialize(this);
 
-            activeScreen = screens.MapScreen;
-
-            CommandItemDrop = new CommandItemDrop(this);
+            activeScreen = MapScreen.Instance;
 
             previousState = Keyboard.GetState();
+            Level.FirstView(Player);
 
             base.Initialize();
+        }
+
+        private void DrawMessage(object sender, string message)
+        {
+            messageToDraw = message;
         }
 
         /// <summary>
@@ -72,10 +78,8 @@ namespace Game1
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            CommandSystem.Instance.LoadContent(this, screens);
+            
             DrawView.Instance.LoadContent(Content, spriteBatch, Player, Level);
-            Level.FirstView(Player);
         }
 
         /// <summary>
@@ -100,13 +104,20 @@ namespace Game1
             {
                 var arraykeys = state.GetPressedKeys();
 
-                if (CheckKey(state, arraykeys[0]) && CommandSystem.Instance.Commands.ContainsKey(arraykeys[0]))
+                if (state.IsKeyDown(arraykeys[0]) & !previousState.IsKeyDown(arraykeys[0]))
                 {
 
-                    var result = activeScreen.RespondToUserInput(arraykeys, screens);
+                    var result = activeScreen.RespondToUserInput(arraykeys);
 
                     activeScreen = result.Screen;
-                    if (result != null && result.IsSuccessAction) RefreshMapView(result.IsNpcTurn);
+                    if (result != null && result.IsSuccessAction)
+                    {
+                        if (result.IsNpcTurn) Level.NPCTurn(Player);
+
+                        Level.ComputeFov(Player.X, Player.Y, Player.RangeFov);
+                        Level.UpdateMapToDraw(Player);
+                        _renderRequired = true;
+                    }
                 }
             }
 
@@ -125,24 +136,13 @@ namespace Game1
 
                 activeScreen.Draw(DrawView.Instance);
 
+                DrawView.Instance.DrawMessage(messageToDraw);
+
                 _renderRequired = false;
+                messageToDraw = string.Empty;
             }
 
             base.Draw(gameTime);
-        }
-
-        private bool CheckKey(KeyboardState state, Keys key)
-        {
-            return state.IsKeyDown(key) & !previousState.IsKeyDown(key);
-        }
-
-        private void RefreshMapView(bool isNpcTurn)
-        {
-            if (isNpcTurn) Level.NPCTurn(Player);
-
-            Level.ComputeFov(Player.X, Player.Y, Player.RangeFov);
-            Level.UpdateMapToDraw(Player);
-            _renderRequired = true;
         }
     }
 }
